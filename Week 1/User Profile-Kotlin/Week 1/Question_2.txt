@@ -1,0 +1,12 @@
+Theo bạn, trong tương lai gần (10 năm) lập trình di dộng có phát triển không ?
+Giải thích tại sao ?
+
+Trả lời:
+- Theo em thì trong lương gần (10 năm) lập trình di động sẽ tiếp tục phát triển.
+- Lý do:
+    + Người dùng smartphone và nhu cầu App ngày càng tăng.
+    + 5G/6G mở ra ứng dụng AR/VR, streaming, real-time.
+    + AI/ML tích hợp, nhiều xử lý trực tiếp trên thiết bị di động.
+    + Framework cross-platform (Flutter, React Native, Kotlin...) giúp phát triển nhanh, tiết kiệm chi phí.
+    + Mobile trở thành trung tâm kết nối IoT, smart home.
+    + Xu hướng mới "super app", UX mới (voice, màn hình gập),...

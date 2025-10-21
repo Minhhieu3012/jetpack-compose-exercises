@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Week 1/User Profile-Kotlin" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Week 2/Email-Validation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Week 2/User-Info-Validator" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Week 2/android-number-input-practice" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Week 3/Basic-Ui-Components" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Week 4/ForgetPasswordFlow" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Week 4/LibraryManagementSystem" vcs="Git" />
+  </component>
+</project>

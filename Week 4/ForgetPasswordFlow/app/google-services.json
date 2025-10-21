@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "196048143169",
+    "project_id": "forget-password-flow",
+    "storage_bucket": "forget-password-flow.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196048143169:android:2b015e988e43070a20d7c0",
+        "android_client_info": {
+          "package_name": "vn.edu.ut.hieupm9898.forgetpasswordflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDarAoRrCzZRhOzenZKtWHfvHO0xLtTkrA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

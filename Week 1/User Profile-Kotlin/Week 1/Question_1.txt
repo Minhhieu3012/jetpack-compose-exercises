@@ -1,0 +1,11 @@
+Mong muốn và định hướng của bạn là gì sau khi học xong môn học là gì ?
+
+Trả lời:
+- Mong muốn của em sau khi học xong môn học là hiểu được toàn bộ kiến thức về phát triển ứng dụng
+trên thiết bị di động, từ thiết kế giao diện và các design pattern như MVVM/MVC, responsive layout,
+kết nối đến BE và tối ưu hiệu năng. Hoàn thành ít nhất một dự án thực tế hoàn chỉnh để đưa mã nguồn
+lên GitHub làm portfolio và chuẩn bị sẵn sàng cho vị trí thực tập hoặc freelance.
+
+- Định hướng hiện tại của em là làm Web Developer nhưng vẫn học môn này. Vì nó giúp em biết thêm
+kiến thức về mobile, cải thiện về thiết kế responsive tốt hơn, phát triển Progressive Web Apps hoặc
+là dùng React Native/Flutter để tạo ứng dụng cross-platform bằng React Native/Flutter.
