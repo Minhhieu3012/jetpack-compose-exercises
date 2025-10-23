@@ -33,19 +33,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
 import vn.edu.ut.hieupm9898.firebaseauth.ui.theme.FirebaseAuthTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Khởi tạo Firebase Analytics
+        firebaseAnalytics = Firebase.analytics
+
         setContent {
             FirebaseAuthTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    FirebaseAuthApp()
+                    FirebaseAuthApp(firebaseAnalytics)
                 }
             }
         }
@@ -53,7 +62,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun FirebaseAuthApp() {
+fun FirebaseAuthApp(firebaseAnalytics: FirebaseAnalytics) {
     var loginResult by remember { mutableStateOf<LoginResult?>(null) }
 
     Column(
@@ -66,10 +75,25 @@ fun FirebaseAuthApp() {
         Button(
             onClick = {
                 val success = (0..1).random() == 1
-                loginResult = if (success)
-                    LoginResult.Success("sample@gmail.com")
-                else
+                loginResult = if (success) {
+                    val email = "sample@gmail.com"
+
+                    // Gửi event đăng nhập thành công lên Firebase
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
+                        param(FirebaseAnalytics.Param.METHOD, "Gmail")
+                        param("login_status", "success")
+                        param("user_email", email)
+                    }
+
+                    LoginResult.Success(email)
+                } else {
+                    // Gửi event lỗi đăng nhập
+                    firebaseAnalytics.logEvent("login_failed") {
+                        param("reason", "User canceled the Google sign-in process")
+                    }
+
                     LoginResult.Error("User canceled the Google sign-in process.")
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -164,12 +188,5 @@ sealed class LoginResult {
     data class Error(val message: String) : LoginResult()
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun FirebaseAuthAppPreview() {
-    FirebaseAuthTheme {
-        FirebaseAuthApp()
-    }
-}
 
 
