@@ -57,4 +57,13 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Coil (tai anh tu URL hoac tep)
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // Material Icons (cho mui ten back, dropdown)
+    implementation("androidx.compose.material:material-icons-extended:1.6.8")
 }
