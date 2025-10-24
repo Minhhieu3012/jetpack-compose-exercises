@@ -1,13 +1,13 @@
 package vn.edu.ut.hieupm9898.loginflow.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -118,15 +118,36 @@ fun ProfileScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(24.dp))
 
             // Anh dai dien
-            AsyncImage(
-                model = "https://randomuser.me/api/portraits/women/44.jpg",
-                placeholder = painterResource(id = R.drawable.avatar),
-                contentDescription = "Profile Picture",
+            Box(
                 modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
                     .size(120.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
+            ) {
+                AsyncImage(
+                    model = "https://randomuser.me/api/portraits/women/44.jpg",
+                    placeholder = painterResource(id = R.drawable.avatar),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+
+                IconButton(
+                    onClick = { /* TODO */ },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(36.dp)
+                        .offset(x = 10.dp, y = 10.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.icon_camera),
+                        contentDescription = "Change profile picture",
+                        tint = Color(0xFF3F51B5),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -150,7 +171,8 @@ fun ProfileScreen(navController: NavController) {
                 readOnly = false,
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedTextColor = Color(0xFF544C4C),
-                    focusedTextColor = Color.Black
+                    focusedTextColor = Color.Black,
+                    focusedBorderColor = Color(0xFF2196F3)
                 )
             )
 
@@ -175,7 +197,8 @@ fun ProfileScreen(navController: NavController) {
                 readOnly = false,
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedTextColor = Color(0xFF544C4C),
-                    focusedTextColor = Color.Black
+                    focusedTextColor = Color.Black,
+                    focusedBorderColor = Color(0xFF2196F3)
                 )
             )
 
@@ -193,21 +216,22 @@ fun ProfileScreen(navController: NavController) {
             OutlinedTextField(
                 value = dateOfBirth,
                 onValueChange = {}, // khong can vi chung ta dung datepicker
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { showDatePicker = true },
+                modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Select Date",
-                        modifier = Modifier.size(36.dp)
-                    )
+                    IconButton(onClick = { showDatePicker = true }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Select Date",
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 },
                 shape = RoundedCornerShape(8.dp),
                 readOnly = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedTextColor = Color(0xFF544C4C),
-                    focusedTextColor = Color.Black
+                    focusedTextColor = Color.Black,
+                    focusedBorderColor = Color(0xFF2196F3)
                 )
             )
             
