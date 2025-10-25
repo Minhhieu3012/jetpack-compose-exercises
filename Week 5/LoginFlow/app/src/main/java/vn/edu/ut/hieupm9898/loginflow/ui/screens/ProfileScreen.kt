@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +32,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,27 +43,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import vn.edu.ut.hieupm9898.loginflow.R
+import vn.edu.ut.hieupm9898.loginflow.viewmodel.AuthViewModel
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(
+    navController: NavController,
+    authViewModel: AuthViewModel = viewModel()
+) {
+    val context = LocalContext.current
+    val userProfile by authViewModel.userProfile.collectAsState()
+
     // State
-    var name by remember { mutableStateOf("Melissa Peters") }
-    var email by remember { mutableStateOf("melpeters@gmail.com") }
-    var dateOfBirth by remember { mutableStateOf("23/05/1995") }
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var dateOfBirth by remember { mutableStateOf("") }
+    var photoUrl by remember { mutableStateOf("") }
+
+    // Cập nhật state khi userProfile thay đổi
+    LaunchedEffect(userProfile) {
+        userProfile?.let { profile ->
+            name = profile.name
+            email = profile.email
+            dateOfBirth = profile.dateOfBirth
+            photoUrl = profile.photoUrl
+        }
+    }
 
     // State dieu khien hien thi datepicker
     var showDatePicker by remember { mutableStateOf(false) }
@@ -84,7 +107,7 @@ fun ProfileScreen(navController: NavController) {
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.popBackStack()},
+                        onClick = { navController.popBackStack() },
                         modifier = Modifier
                             .background(
                                 color = Color(0xFF2196F3),
@@ -100,7 +123,21 @@ fun ProfileScreen(navController: NavController) {
                     }
                 },
                 actions = {
-                    Spacer(modifier = Modifier.size(48.dp))
+                    IconButton(
+                        onClick = {
+                            authViewModel.signOut(context) // Thêm context parameter
+                            navController.navigate("login") {
+                                popUpTo("profile") { inclusive = true }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Logout",
+                            tint = Color(0xFFE53935),
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent
@@ -124,7 +161,7 @@ fun ProfileScreen(navController: NavController) {
                     .size(120.dp)
             ) {
                 AsyncImage(
-                    model = "https://randomuser.me/api/portraits/women/44.jpg",
+                    model = photoUrl.ifEmpty { "https://randomuser.me/api/portraits/women/44.jpg" },
                     placeholder = painterResource(id = R.drawable.avatar),
                     contentDescription = "Profile Picture",
                     modifier = Modifier
@@ -134,7 +171,7 @@ fun ProfileScreen(navController: NavController) {
                 )
 
                 IconButton(
-                    onClick = { /* TODO */ },
+                    onClick = { /* TODO: Chức năng đổi ảnh */ },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .size(36.dp)
@@ -163,7 +200,7 @@ fun ProfileScreen(navController: NavController) {
             )
             OutlinedTextField(
                 value = name,
-                onValueChange = { name = it }, // update state khi user nhap
+                onValueChange = { name = it },
                 placeholder = { Text(text = "Enter your name", color = Color(0xFF544C4C)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -189,7 +226,7 @@ fun ProfileScreen(navController: NavController) {
             )
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it }, // update state khi user nhap
+                onValueChange = { email = it },
                 placeholder = { Text(text = "Enter your email", color = Color(0xFF544C4C)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -215,7 +252,7 @@ fun ProfileScreen(navController: NavController) {
             )
             OutlinedTextField(
                 value = dateOfBirth,
-                onValueChange = {}, // khong can vi chung ta dung datepicker
+                onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
@@ -234,8 +271,30 @@ fun ProfileScreen(navController: NavController) {
                     focusedBorderColor = Color(0xFF2196F3)
                 )
             )
-            
+
             Spacer(modifier = Modifier.weight(1f))
+
+            // nut save
+            Button(
+                onClick = {
+                    authViewModel.updateUserProfile(name, email, dateOfBirth)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4CAF50)
+                )
+            ) {
+                Text(
+                    text = "Save Changes",
+                    fontWeight = FontWeight(weight = 600),
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             // nut back
             Button(
@@ -266,9 +325,8 @@ fun ProfileScreen(navController: NavController) {
                 TextButton(
                     onClick = {
                         showDatePicker = false
-                        // lay ngay da chon va dinh dang lai
                         val selectedDateMillis = datePickerState.selectedDateMillis
-                        if(selectedDateMillis != null) {
+                        if (selectedDateMillis != null) {
                             val localDate = Instant.ofEpochMilli(selectedDateMillis)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
@@ -280,7 +338,7 @@ fun ProfileScreen(navController: NavController) {
                 }
             },
             dismissButton = {
-                TextButton(onClick = {showDatePicker = false}) {
+                TextButton(onClick = { showDatePicker = false }) {
                     Text(text = "Cancel")
                 }
             }
