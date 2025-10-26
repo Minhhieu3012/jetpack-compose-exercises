@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.Firebase
@@ -40,6 +39,7 @@ import com.google.firebase.analytics.logEvent
 import vn.edu.ut.hieupm9898.firebaseauth.ui.theme.FirebaseAuthTheme
 
 class MainActivity : ComponentActivity() {
+    // Khởi tạo Firebase Analytics
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
