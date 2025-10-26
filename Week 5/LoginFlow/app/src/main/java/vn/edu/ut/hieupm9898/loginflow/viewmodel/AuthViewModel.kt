@@ -26,28 +26,33 @@ data class UserProfile(
     val photoUrl: String = ""
 )
 
-// Sealed class cho auth state
+// Sealed class (lớp niêm phong) cho auth state
+// định nghĩa các trạng thái có thể xảy ra trong quá trình đăng nhập
 sealed class AuthState {
-    object Idle : AuthState()
-    object Loading : AuthState()
+    object Idle : AuthState() // Trạng thái chờ, chưa làm gì
+    object Loading : AuthState() // đang xử lý
     data class Success(val userId: String) : AuthState()
     data class Error(val message: String) : AuthState()
 }
 
 class AuthViewModel : ViewModel() {
+    // B1: Khởi tạo
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var googleSignInClient: GoogleSignInClient? = null
-
-    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
-    val authState: StateFlow<AuthState> = _authState.asStateFlow()
-
-    private val _userProfile = MutableStateFlow<UserProfile?>(null)
-    val userProfile: StateFlow<UserProfile?> = _userProfile.asStateFlow()
 
     init {
         checkCurrentUser()
     }
 
+    // State cho trạng thái xác thực
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
+    val authState: StateFlow<AuthState> = _authState.asStateFlow()
+
+    // State cho thông tin profile
+    private val _userProfile = MutableStateFlow<UserProfile?>(null)
+    val userProfile: StateFlow<UserProfile?> = _userProfile.asStateFlow()
+
+    // B1: KHởi tạo
     private fun checkCurrentUser() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
@@ -69,6 +74,7 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    // B2: Chuẩn bị (UI gọi)
     // Khởi tạo GoogleSignInClient
     fun initGoogleSignIn(context: Context, webClientId: String) {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -79,20 +85,23 @@ class AuthViewModel : ViewModel() {
         googleSignInClient = GoogleSignIn.getClient(context, gso)
     }
 
+    // B3: Bắt đầu đăng nhập (UI gọi)
     // Lấy Intent để launch Sign In
     fun getSignInIntent(): Intent? {
         _authState.value = AuthState.Loading
         return googleSignInClient?.signInIntent
     }
 
-    // Xử lý kết quả từ Google Sign In
+    // B4: Xử lý kết quả từ Google Sign In
     fun handleSignInResult(result: ActivityResult) {
-        viewModelScope.launch {
+        viewModelScope.launch { // chạy trên 1 coroutine
             try {
+                // Lấy tài khoản google từ kết quả trả về
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 val account = task.getResult(ApiException::class.java)
 
                 if (account != null) {
+                    // Nếu lấy được tk google -> dùng nó để sign in firebase
                     firebaseAuthWithGoogle(account)
                 } else {
                     _authState.value = AuthState.Error("Không thể lấy thông tin tài khoản")
@@ -105,13 +114,18 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    // B5: Đăng nhập vào Firebase (nội bộ)
     private suspend fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
         try {
+            // lấy idToken từ tài khoản google
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+
+            // dùng token để sign in vào firebase
             val authResult = auth.signInWithCredential(credential).await()
 
             val user = authResult.user
             if (user != null) {
+                // nếu thành công -> lưu thông tin vào state
                 _authState.value = AuthState.Success(user.uid)
                 loadUserProfile()
             } else {
@@ -122,6 +136,7 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    // gọi hàm này khi nhấn nút logout (UI gọi)
     fun signOut(context: Context) {
         viewModelScope.launch {
             try {
@@ -136,6 +151,7 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    // gọi hàm này để update thông tin profile
     fun updateUserProfile(name: String, email: String, dateOfBirth: String) {
         _userProfile.value = _userProfile.value?.copy(
             name = name,

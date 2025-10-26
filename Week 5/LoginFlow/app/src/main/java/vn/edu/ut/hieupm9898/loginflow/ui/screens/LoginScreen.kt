@@ -47,25 +47,33 @@ import vn.edu.ut.hieupm9898.loginflow.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(
+    // 1. State Management
     navController: NavController,
     authViewModel: AuthViewModel = viewModel()
 ) {
+    // lấy context ( cần cho google sign in)
     val context = LocalContext.current
+
+    // theo dõi state xác thực từ viewModel
     val authState by authViewModel.authState.collectAsState()
+
+    // tạo 1 state điều khiển snackbar (thông báo lỗi)
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Web Client ID từ google-services.json
     val webClientId = "496991862577-kaaki1429g8tjd212t9us1fvqd6reec0.apps.googleusercontent.com"
 
-    // Khởi tạo Google Sign In
+    // 2. Xử lý logic (side effects)
+    // Khởi tạo Google Sign In 1 lần duy nhất
     LaunchedEffect(Unit) {
         authViewModel.initGoogleSignIn(context, webClientId)
     }
 
-    // Activity Result Launcher
+    // Chuẩn bị 1 trình chạy (launcher) để nhận kết quả trả về từ activity đăng nhập google
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
+        // Khi google trả về kết quả, gửi nó cho viewModel xử lý
         authViewModel.handleSignInResult(result)
     }
 
@@ -74,18 +82,22 @@ fun LoginScreen(
         when (val state = authState) {
             is AuthState.Success -> {
                 navController.navigate("profile") {
+                    // Xóa màn hình login khỏi ngăn xếp
                     popUpTo("login") { inclusive = true }
                 }
             }
             is AuthState.Error -> {
+                // Hiển thị thông báo lỗi
                 snackbarHostState.showSnackbar(state.message)
             }
-            else -> {}
+            else -> {} // Không làm gì trong các trạng thái khác
         }
     }
 
+    // 3. Bố cục giao diện UI
+    // Scaffold là 1 layout cơ bản của material 3 (cho phép có bottomBar, snackBarHost,...)
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(snackbarHostState) }, // Vị trí hiển thị snackbar
         bottomBar = {
             Text(
                 text = "© UTHSmartTasks",
@@ -97,7 +109,7 @@ fun LoginScreen(
                 color = Color(0xFF4A4646)
             )
         }
-    ) { paddingValues ->
+    ) { paddingValues -> // giúp nội dung không bị che bởi bottomBar
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -136,7 +148,7 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(100.dp))
 
-                // welcome
+                // tieu de welcome
                 Text(
                     text = "Welcome",
                     fontSize = 22.sp,
@@ -158,6 +170,7 @@ fun LoginScreen(
                 // nut dang nhap
                 OutlinedButton(
                     onClick = {
+                        // Khi click vào nút, lấy intent từ viewModel và khởi chạy nó
                         val signInIntent = authViewModel.getSignInIntent()
                         signInIntent?.let { launcher.launch(it) }
                     },
@@ -169,9 +182,13 @@ fun LoginScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFD5EDFF)
                     ),
+
+                    // vô hiệu hóa nút nếu đang ở trạng thái Loading
                     enabled = authState !is AuthState.Loading
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
+
+                        // UI động (khi trạng thái là Loading)
                         if (authState is AuthState.Loading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(24.dp),
@@ -185,6 +202,8 @@ fun LoginScreen(
                             )
                         }
                         Spacer(modifier = Modifier.width(12.dp))
+
+                        // thay đổi cả text và nút dựa trên state
                         Text(
                             text = if (authState is AuthState.Loading) "ĐANG ĐĂNG NHẬP..." else "SIGN IN WITH GOOGLE",
                             fontWeight = FontWeight(weight = 600),

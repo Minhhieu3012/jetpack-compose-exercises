@@ -60,22 +60,24 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class) // Cần thiết để dùng các API mới của Material3
 @Composable
 fun ProfileScreen(
     navController: NavController,
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel() // lấy viewModel
 ) {
     val context = LocalContext.current
+
+    // 1. lắng nghe thông tin profile từ viewModel
     val userProfile by authViewModel.userProfile.collectAsState()
 
-    // State
+    // 2. Tạo Local state để lưu trữ thông tin người dùng
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var dateOfBirth by remember { mutableStateOf("") }
     var photoUrl by remember { mutableStateOf("") }
 
-    // Cập nhật state khi userProfile thay đổi
+    // 3. Cập nhật các local state khi dữ liệu từ viewModel thay đổi
     LaunchedEffect(userProfile) {
         userProfile?.let { profile ->
             name = profile.name
@@ -85,8 +87,10 @@ fun ProfileScreen(
         }
     }
 
-    // State dieu khien hien thi datepicker
+    // 4. State điều khiển việc ẩn / hiện của datePicker
     var showDatePicker by remember { mutableStateOf(false) }
+
+    // State của chính datePicker (để biết ngày nào đang được chọn)
     val datePickerState = rememberDatePickerState()
 
     Scaffold(
@@ -105,6 +109,8 @@ fun ProfileScreen(
                         )
                     }
                 },
+
+                // nút back (điều hướng)
                 navigationIcon = {
                     IconButton(
                         onClick = { navController.popBackStack() },
@@ -123,6 +129,8 @@ fun ProfileScreen(
                     }
                 },
                 actions = {
+
+                    // Nút log out (điều hướng)
                     IconButton(
                         onClick = {
                             authViewModel.signOut(context) // Thêm context parameter
@@ -154,7 +162,7 @@ fun ProfileScreen(
         ) {
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Anh dai dien
+            // Anh dai dien (avatar)
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -170,6 +178,7 @@ fun ProfileScreen(
                     contentScale = ContentScale.Crop
                 )
 
+                // nút đổi ảnh (camera)
                 IconButton(
                     onClick = { /* TODO: Chức năng đổi ảnh */ },
                     modifier = Modifier
@@ -215,6 +224,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(18.dp))
 
+            // nhap email
             Text(
                 text = "Email",
                 fontWeight = FontWeight.Bold,
@@ -241,6 +251,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(18.dp))
 
+            // nhap ngay sinh
             Text(
                 text = "Date of Birth",
                 fontWeight = FontWeight.Bold,
@@ -317,16 +328,18 @@ fun ProfileScreen(
             }
         }
     }
-    // logic cho datepickerDialog
+    // Hiển thị Dialog khi showDatePicker == true
     if (showDatePicker) {
         DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
+            onDismissRequest = { showDatePicker = false }, // tắt dialog khi nhấn ra ngoài
+            confirmButton = { // nút ok
                 TextButton(
                     onClick = {
                         showDatePicker = false
+                        // lấy ngày đã chọn từ datePickerState (dưới dạng mili giây)
                         val selectedDateMillis = datePickerState.selectedDateMillis
                         if (selectedDateMillis != null) {
+                            // chuyển mili giây sang ngày
                             val localDate = Instant.ofEpochMilli(selectedDateMillis)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
@@ -337,12 +350,13 @@ fun ProfileScreen(
                     Text(text = "OK")
                 }
             },
-            dismissButton = {
+            dismissButton = { // nút cancel (đóng dialog)
                 TextButton(onClick = { showDatePicker = false }) {
                     Text(text = "Cancel")
                 }
             }
         ) {
+            // Nội dung của dialog là composable DatePicker
             DatePicker(state = datePickerState)
         }
     }

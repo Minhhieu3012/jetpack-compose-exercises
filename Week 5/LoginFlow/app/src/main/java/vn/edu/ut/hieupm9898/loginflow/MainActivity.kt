@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavigation() {
+    // khởi tạo state
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
     val authState by authViewModel.authState.collectAsState()
