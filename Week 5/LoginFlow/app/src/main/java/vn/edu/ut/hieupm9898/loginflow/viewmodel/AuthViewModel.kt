@@ -40,10 +40,6 @@ class AuthViewModel : ViewModel() {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var googleSignInClient: GoogleSignInClient? = null
 
-    init {
-        checkCurrentUser()
-    }
-
     // State cho trạng thái xác thực
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
@@ -51,6 +47,11 @@ class AuthViewModel : ViewModel() {
     // State cho thông tin profile
     private val _userProfile = MutableStateFlow<UserProfile?>(null)
     val userProfile: StateFlow<UserProfile?> = _userProfile.asStateFlow()
+
+    // CHẠY khối init SAU KHI các state đã được khởi tạo
+    init {
+        checkCurrentUser()
+    }
 
     // B1: KHởi tạo
     private fun checkCurrentUser() {
