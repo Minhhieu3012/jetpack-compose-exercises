@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="vn.edu.ut.hieupm9898.handlenetworkandcallapi" />
+                  <option name="mobileSdkAppId" value="1:135929804125:android:c3e30647d46ba9f328a4b4" />
+                  <option name="projectId" value="handle-network-and-call-api" />
+                  <option name="projectNumber" value="135929804125" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
