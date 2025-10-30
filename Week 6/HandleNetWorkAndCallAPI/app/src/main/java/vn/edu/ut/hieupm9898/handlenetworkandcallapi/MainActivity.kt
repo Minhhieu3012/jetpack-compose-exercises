@@ -1,6 +1,5 @@
 package vn.edu.ut.hieupm9898.handlenetworkandcallapi
 
-import android.content.pm.LauncherApps
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,9 +15,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,11 +39,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.gson.annotations.SerializedName
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import coil.compose.rememberAsyncImagePainter
+import retrofit2.http.GET
 import vn.edu.ut.hieupm9898.handlenetworkandcallapi.ui.theme.HandleNetWorkAndCallAPITheme
 
 class MainActivity : ComponentActivity() {
@@ -91,7 +99,7 @@ interface ProductApi {
 fun createApi(): ProductApi {
     return Retrofit.Builder()
         // URL co so phai ket thuc bang dau "/"
-        .baseURL("")
+        .baseUrl("https://www.google.com/url?sa=i&url=https%3A%2F%2Ftomser.shop%2F&psig=AOvVaw0OfAlvhWoMy3oiEUKn95U6&ust=1761904782715000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCJiT2vPUy5ADFQAAAAAdAAAAABAE/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(ProductApi::class.java)
@@ -105,7 +113,7 @@ fun HandleNetWorkAndCallAPIApp() {
 
     // Khởi tạo đối tượng API bằng cách gọi hàm createApi()
     val api = remember { createApi() }
-    var products by remember { mutableStateOf<Product?>(null) }
+    var product by remember { mutableStateOf<Product?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -114,14 +122,13 @@ fun HandleNetWorkAndCallAPIApp() {
         try {
             product = api.getProduct()
         } catch (e: Exception) {
-            error = "Loi khi tai du lieu: ${e.message}"
+            error = "Lỗi khi tải dữ liệu: ${e.message}"
         } finally {
-            isLoading = true
+            isLoading = false
         }
     }
 
-
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 // Chúng ta sẽ không dùng navigationIcon và actions ở đây nữa
@@ -136,7 +143,7 @@ fun HandleNetWorkAndCallAPIApp() {
                     ) {
                         // 1. Navigation Icon ở bên trái
                         IconButton(
-                            onClick = { /* TODO */},
+                            onClick = { /* TODO */ },
                             modifier = Modifier
                                 .background(
                                     color = Color(0xFF2196F3),
@@ -176,57 +183,94 @@ fun HandleNetWorkAndCallAPIApp() {
             )
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Chỉ giữ lại paddingValues từ Scaffold (cho TopAppBar)
+                .padding(paddingValues)
         ) {
-            Image(
-                painter = painterResource(R.drawable.product),
-                contentDescription = "Product image",
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .size(size = 400.dp)
-            )
-
-            Text(
-                text = "Giày Nike Nam Nữ Chính Hãng - Nike Air Force 1\n'07 LV8 - Màu Trắng | JapanSport HF2898-100",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 24.dp)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Giá: 4.000.000₫",
-                fontSize = 28.sp,
-                modifier = Modifier.padding(horizontal = 24.dp),
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFD60A0A)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .background(
-                        color = Color(0xFFD5D1D1),
-                        shape = RoundedCornerShape(16.dp)
+            when {
+                isLoading -> {
+                    CircularProgressIndicator(
+                        // .align() sẽ hoạt động vì 'when' nằm trong 'Box'
+                        modifier = Modifier.align(Alignment.Center),
+                        color = Color(0xFFFF5252)
                     )
-            ) {
-                Text(
-                    text = "Với giày chạy bộ, từng gram đều quan trọng. Đó là lý do tại\n sao đế giữa LIGHTSTRIKE PRO mới nhẹ hơn so với phiên\n bản trước. Mút foam đế giữa siêu nhẹ và thoải mái này có\n lớp đệm đàn hồi được thiết kế để hạn chế tiêu hao năng\n lượng. Trong các mẫu giày tập luyện, công nghệ này được\n thiết kế nhằm hỗ trợ cơ bắp của vận động viên để họ có thể phục hồi nhanh hơn giữa các cuộc đua.",
-                    fontSize = 10.sp,
-                    modifier = Modifier.padding(16.dp)
-                )
+                }
+
+                error != null -> {
+                    Text(
+                        text = error!!,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .align(Alignment.Center) // .align() cũng sẽ hoạt động
+                            .padding(16.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                product != null -> {
+                    ProductDetail(product!!)
+                }
             }
         }
     }
 }
 
+@Composable
+fun ProductDetail(product: Product) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        // Dung painter cua Coil de load anh tu URL
+        Image(
+            painter = rememberAsyncImagePainter(product.image),
+            contentDescription = "Product image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp)
+                .padding(horizontal = 24.dp),
+            contentScale = ContentScale.Fit // Theo kich thuoc anh
+        )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = product.name,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 24.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Giá: ${product.price}đ",
+            fontSize = 28.sp,
+            modifier = Modifier.padding(horizontal = 24.dp),
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFFD60A0A)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .background(
+                    color = Color(0xFFD5D1D1),
+                    shape = RoundedCornerShape(16.dp)
+                )
+        ) {
+            Text(
+                text = product.description,
+                fontSize = 10.sp,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+}
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HandleNetWorkAndCallAPIAppPreview() {

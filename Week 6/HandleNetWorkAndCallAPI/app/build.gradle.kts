@@ -57,4 +57,11 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Thư viện để tải ảnh từ URL (Giữ phiên bản mới nhất)
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // Thư viện để gọi API (Giữ phiên bản mới nhất)
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 }
