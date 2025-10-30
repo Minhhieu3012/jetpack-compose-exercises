@@ -1,5 +1,6 @@
 package vn.edu.ut.hieupm9898.handlenetworkandcallapi
 
+import android.content.pm.LauncherApps
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +29,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,9 +61,66 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Data Model để lưu trữ thông tin sản phẩm
+data class Product(
+    @SerializedName("id")
+    val id: String,
+
+    @SerializedName("name")
+    val name: String,
+
+    @SerializedName("price")
+    val price: Double,
+
+    // Mapping "desc" tu JSON vao property "description"
+    @SerializedName("desc")
+    val description: String,
+
+    // Mapping "imgURL" tu JSON vao property "image"
+    @SerializedName("imgURL")
+    val image: String
+)
+
+// API Service de lay danh sach san pham
+interface ProductApi {
+    @GET("product")
+    suspend fun getProduct(): Product // Trả về danh sách sản phẩm
+}
+
+// Ham tao doi tuong Retrofit de thuc hien cac yeu cau API
+fun createApi(): ProductApi {
+    return Retrofit.Builder()
+        // URL co so phai ket thuc bang dau "/"
+        .baseURL("")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(ProductApi::class.java)
+}
+
+
+// UI Composable để hiển thị danh sách sản phẩm
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HandleNetWorkAndCallAPIApp() {
+
+    // Khởi tạo đối tượng API bằng cách gọi hàm createApi()
+    val api = remember { createApi() }
+    var products by remember { mutableStateOf<Product?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    // Tu dong load du lieu san pham khi man hinh khoi tao
+    LaunchedEffect(Unit) {
+        try {
+            product = api.getProduct()
+        } catch (e: Exception) {
+            error = "Loi khi tai du lieu: ${e.message}"
+        } finally {
+            isLoading = true
+        }
+    }
+
+
     Scaffold (
         topBar = {
             TopAppBar(
