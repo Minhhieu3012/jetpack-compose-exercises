@@ -72,26 +72,26 @@ class MainActivity : ComponentActivity() {
 // Data Model để lưu trữ thông tin sản phẩm
 data class Product(
     @SerializedName("id")
-    val id: String,
+    val id: String, // API trả về Int, nhưng Gson sẽ tự ép kiểu sang String
 
-    @SerializedName("name")
+    @SerializedName("title")
     val name: String,
 
     @SerializedName("price")
     val price: Double,
 
     // Mapping "desc" tu JSON vao property "description"
-    @SerializedName("desc")
+    @SerializedName("description")
     val description: String,
 
     // Mapping "imgURL" tu JSON vao property "image"
-    @SerializedName("imgURL")
+    @SerializedName("thumbnail")
     val image: String
 )
 
 // API Service de lay danh sach san pham
 interface ProductApi {
-    @GET("product")
+    @GET("products/1")
     suspend fun getProduct(): Product // Trả về danh sách sản phẩm
 }
 
@@ -99,7 +99,7 @@ interface ProductApi {
 fun createApi(): ProductApi {
     return Retrofit.Builder()
         // URL co so phai ket thuc bang dau "/"
-        .baseUrl("https://www.google.com/url?sa=i&url=https%3A%2F%2Ftomser.shop%2F&psig=AOvVaw0OfAlvhWoMy3oiEUKn95U6&ust=1761904782715000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCJiT2vPUy5ADFQAAAAAdAAAAABAE/")
+        .baseUrl("https://dummyjson.com/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(ProductApi::class.java)
@@ -131,8 +131,7 @@ fun HandleNetWorkAndCallAPIApp() {
     Scaffold(
         topBar = {
             TopAppBar(
-                // Chúng ta sẽ không dùng navigationIcon và actions ở đây nữa
-                // mà sẽ tự định nghĩa toàn bộ cấu trúc trong title
+                modifier = Modifier.padding(top = 20.dp),
                 title = {
                     Row(
                         modifier = Modifier
@@ -165,7 +164,7 @@ fun HandleNetWorkAndCallAPIApp() {
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF2196F3),
                             modifier = Modifier.weight(1f), // ĐÂY LÀ ĐIỀU KỲ DIỆU!
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center // Căn chữ vào giữa không gian nó chiếm
+                            textAlign = TextAlign.Center // Căn chữ vào giữa không gian nó chiếm
                         )
 
                         // 3. Một Spacer trống bên phải để cân bằng
