@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 // Data Model để lưu trữ thông tin sản phẩm
 data class Product(
+    // @SerializedName là bản đồ cho thư viện Gson để ánh xạ dữ liệu từ JSON sang đối tượng
+
     @SerializedName("id")
     val id: String, // API trả về Int, nhưng Gson sẽ tự ép kiểu sang String
 

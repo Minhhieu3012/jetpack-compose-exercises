@@ -6,7 +6,9 @@ import retrofit2.http.GET
 
 // API Service de lay danh sach san pham
 interface ProductApi {
-    @GET("products/1")
+    @GET("products/30")
+
+    // Hàm Coroutine (có thể tạm dừng mà không ảnh hưởng đến luồng chính)
     suspend fun getProduct(): Product // Trả về danh sách sản phẩm
 }
 
@@ -15,7 +17,10 @@ fun createApi(): ProductApi {
     return Retrofit.Builder()
         // URL co so phai ket thuc bang dau "/"
         .baseUrl("https://dummyjson.com/")
+
+        // Người phiên dịch
         .addConverterFactory(GsonConverterFactory.create())
+
         .build()
         .create(ProductApi::class.java)
 }

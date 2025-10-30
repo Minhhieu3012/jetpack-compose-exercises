@@ -47,16 +47,19 @@ import vn.edu.ut.hieupm9898.handlenetworkandcallapi.ui.theme.HandleNetWorkAndCal
 // UI Composable để hiển thị danh sách sản phẩm
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HandleNetWorkAndCallAPIApp() {
+fun ProductScreen() {
 
     // Khởi tạo đối tượng API bằng cách gọi hàm createApi()
     val api = remember { createApi() }
+
+    // State
     var product by remember { mutableStateOf<Product?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
 
     // Tu dong load du lieu san pham khi man hinh khoi tao
     LaunchedEffect(Unit) {
+        // xử lí việc gọi api
         try {
             product = api.getProduct()
         } catch (e: Exception) {
@@ -130,7 +133,7 @@ fun HandleNetWorkAndCallAPIApp() {
                     CircularProgressIndicator(
                         // .align() sẽ hoạt động vì 'when' nằm trong 'Box'
                         modifier = Modifier.align(Alignment.Center),
-                        color = Color(0xFFFF5252)
+                        color = Color(0xFF2196F3)
                     )
                 }
 
@@ -146,6 +149,7 @@ fun HandleNetWorkAndCallAPIApp() {
                 }
 
                 product != null -> {
+                    // Nhận dữ liệu từ API và hiển thị lên màn hình
                     ProductDetail(product!!)
                 }
             }
@@ -175,7 +179,7 @@ fun ProductDetail(product: Product) {
 
         Text(
             text = product.name,
-            fontSize = 14.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 24.dp)
         )
@@ -202,7 +206,7 @@ fun ProductDetail(product: Product) {
         ) {
             Text(
                 text = product.description,
-                fontSize = 10.sp,
+                fontSize = 16.sp,
                 modifier = Modifier.padding(16.dp)
             )
         }
@@ -212,6 +216,6 @@ fun ProductDetail(product: Product) {
 @Composable
 fun HandleNetWorkAndCallAPIAppPreview() {
     HandleNetWorkAndCallAPITheme {
-        HandleNetWorkAndCallAPIApp()
+        ProductScreen()
     }
 }
