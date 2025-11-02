@@ -2,6 +2,7 @@ package vn.edu.ut.hieupm9898.homepageflow.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,8 +28,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -40,10 +39,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,57 +49,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vn.edu.ut.hieupm9898.homepageflow.R
-
-// Sample Data
-data class Task(
-    val id: Int,
-    val title: String,
-    val description: String,
-    val status: String,
-    val dateTime: String,
-    val color: Color,
-    val isCompleted: Boolean
-)
-
-// Sample Task List
-val sampleTasks = listOf(
-    Task(
-        id = 1,
-        title = "Complete Android Project",
-        description = "Finish the UI, integrate API, and\n write documentation",
-        status = "Status: In Progress",
-        dateTime = "14:00 2500-03-26",
-        color = Color(0xFFE1BBC1),
-        isCompleted = true
-    ),
-
-    Task(
-        id = 2,
-        title = "Doctor Appointment 2",
-        description = "This task is related to Work. It\n needs to be completed",
-        status = "Status: Pending",
-        dateTime = "14:00 2500-03-26",
-        color = Color(0xFFBAD7BA),
-        isCompleted = true
-    ),
-
-    Task(
-        id = 3,
-        title = "Meeting",
-        description = "This task is related to Fitness. It\n needs to be completed",
-        status = "Status: Pending",
-        dateTime = "14:00 2500-03-26",
-        color = Color(0xFFB7E9FF),
-        isCompleted = false
-    )
-)
+import vn.edu.ut.hieupm9898.homepageflow.data.model.Task
 
 // Màn hình chính
 @Composable
-fun HomeScreen() {
-    // Quan ly trang thai cua danh sach task
-    var tasks by remember { mutableStateOf(sampleTasks) }
-
+fun HomeScreen(
+    tasks: List<Task>,
+    onTaskClick: (String) -> Unit
+) {
     Scaffold(
         // BottomAppBar
         bottomBar = { TaskBottomBar() },
@@ -128,16 +80,7 @@ fun HomeScreen() {
                 items(tasks) { task ->
                     TaskItem(
                         task = task,
-                        onCheckedChange = { newCheckedState ->
-                            // cap nhat trang thai cua task
-                            tasks = tasks.map {
-                                if (it.id == task.id) {
-                                    it.copy(isCompleted = newCheckedState)
-                                } else {
-                                    it
-                                }
-                            }
-                        }
+                        onTaskClick = { onTaskClick(task.id) }
                     )
                 }
             }
@@ -196,34 +139,33 @@ fun TaskHeader() {
 @Composable
 fun TaskItem(
     task: Task,
-    onCheckedChange: (Boolean) -> Unit
+    onTaskClick: () -> Unit
 ) {
+
+    val cardColor = try {
+        Color(android.graphics.Color.parseColor(task.colorHex))
+    } catch (_: Exception) {
+        Color(0xFFE1BBC1) // Màu mặc định nếu parse lỗi
+    }
+
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = task.color
+            containerColor = cardColor
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), // Loai bo box shadow
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onTaskClick() }
     ) {
         Column(
             modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
         ) {
             // Phan tren: Checkbox, title, desc
             Row(
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.Top,
+                modifier = Modifier.padding(start = 16.dp)
             ) {
-                Checkbox(
-                    checked = task.isCompleted,
-                    onCheckedChange = onCheckedChange,
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Color.Black,
-                        uncheckedColor = Color.Black,
-                    ),
-                )
-
-                Spacer(modifier = Modifier.width(4.dp))
-
                 Column {
                     Text(
                         text = task.title,
@@ -243,10 +185,12 @@ fun TaskItem(
                 }
             }
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             // Phan duoi: Status, DateTime
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 Text(
                     text = task.status,
@@ -373,5 +317,5 @@ fun TaskFAB() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(tasks = emptyList(),onTaskClick = {})
 }

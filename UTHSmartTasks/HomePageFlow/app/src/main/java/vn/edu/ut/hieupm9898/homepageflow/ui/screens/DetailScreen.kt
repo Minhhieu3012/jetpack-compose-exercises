@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -38,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,39 +44,51 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vn.edu.ut.hieupm9898.homepageflow.R
+import vn.edu.ut.hieupm9898.homepageflow.data.model.Attachment
+import vn.edu.ut.hieupm9898.homepageflow.data.model.Subtask
+import vn.edu.ut.hieupm9898.homepageflow.data.model.Task
 
 // Man hinh chinh
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen() {
+fun DetailScreen(
+    task: Task?,
+    onNavigateBack: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
     Scaffold(
         containerColor = Color.White,
-        topBar = { DetailTopBar() } // Thanh bar tren cung (fixed)
+        topBar = { DetailTopBar(
+            onNavigateBack = onNavigateBack,
+            onDeleteClick = onDeleteClick
+        ) } // Thanh bar tren cung (fixed)
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Spacer(modifier = Modifier.height(24.dp))
+        if(task != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Spacer(modifier = Modifier.height(24.dp))
 
-            // Tieu de Task
-            DetailHeader()
-            Spacer(modifier = Modifier.height(16.dp))
+                // Tieu de Task
+                DetailHeader(task = task)
+                Spacer(modifier = Modifier.height(16.dp))
 
-            // The thong tin (category, status, priority)
-            InfoCard()
-            Spacer(modifier = Modifier.height(24.dp))
+                // The thong tin (category, status, priority)
+                InfoCard(task = task)
+                Spacer(modifier = Modifier.height(24.dp))
 
-            // Phan Subtasks
-            SubtasksSection()
-            Spacer(modifier = Modifier.height(24.dp))
+                // Phan Subtasks
+                SubtasksSection( subtasks = task.subtasks)
+                Spacer(modifier = Modifier.height(24.dp))
 
-            // Phan attachments
-            AttachmentsSection()
-            Spacer(modifier = Modifier.height(16.dp))
+                // Phan attachments
+                AttachmentsSection(attachments = task.attachments)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 }
@@ -86,7 +96,10 @@ fun DetailScreen() {
 // Thanh Top Bar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailTopBar() {
+fun DetailTopBar(
+    onNavigateBack: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
     CenterAlignedTopAppBar(
         modifier = Modifier.padding(top = 12.dp),
         title = {
@@ -101,7 +114,7 @@ fun DetailTopBar() {
         // Nut back
         navigationIcon = {
             IconButton(
-                onClick = { /* TODO */},
+                onClick = onNavigateBack,
                 modifier = Modifier
                     .padding(start = 16.dp)
                     .size(40.dp)
@@ -119,7 +132,7 @@ fun DetailTopBar() {
         // Nut Delete
         actions = {
             IconButton(
-                onClick = { /* TODO */},
+                onClick = onDeleteClick,
                 modifier = Modifier
                     .padding(end = 16.dp)
                     .size(40.dp)
@@ -141,17 +154,17 @@ fun DetailTopBar() {
 
 // Tieu de va mo ta Task
 @Composable
-fun DetailHeader() {
+fun DetailHeader(task: Task) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "Complete Android Project",
+            text = task.title,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF333333)
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Finish the UI, integrate API, and write documentation",
+            text = task.description,
             style = MaterialTheme.typography.bodyMedium,
             color = Color(0xFF333333)
         )
@@ -161,7 +174,7 @@ fun DetailHeader() {
 
 // The thong tin
 @Composable
-fun InfoCard() {
+fun InfoCard(task: Task) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -180,17 +193,17 @@ fun InfoCard() {
             InfoItem(
                 iconResId = R.drawable.category,
                 label = "Category",
-                value = "Work"
+                value = task.category
             )
             InfoItem(
                 iconResId = R.drawable.status,
                 label = "Status",
-                value = "In Progress"
+                value = task.status
             )
             InfoItem(
                 iconResId = R.drawable.priority,
                 label = "Priority",
-                value = "High"
+                value = task.priority
             )
         }
     }
@@ -225,7 +238,7 @@ fun InfoItem(iconResId: Int, label: String, value: String) {
 
 // Khu vuc Subtasks
 @Composable
-fun SubtasksSection() {
+fun SubtasksSection(subtasks: List<Subtask>) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Subtasks",
@@ -234,12 +247,11 @@ fun SubtasksSection() {
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Danh sách các subtask
-        SubtaskItem(text = "This task is related to Fitness. It needs\n to be completed")
-        Spacer(modifier = Modifier.height(8.dp))
-        SubtaskItem(text = "This task is related to Fitness. It needs\n to be completed")
-        Spacer(modifier = Modifier.height(8.dp))
-        SubtaskItem(text = "This task is related to Fitness. It needs\n to be completed")
+        // Dùng vòng lặp để hiển thị tất cả subtask
+        subtasks.forEach { subtask ->
+            SubtaskItem(text = subtask.text)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
     }
 }
 
@@ -278,7 +290,7 @@ fun SubtaskItem(text: String) {
 
 // Khu vuc Attachments
 @Composable
-fun AttachmentsSection() {
+fun AttachmentsSection(attachments: List<Attachment>) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Attachments",
@@ -287,8 +299,11 @@ fun AttachmentsSection() {
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Mục đính kèm
-        AttachmentItem(filename = "document_1_0.pdf")
+        // Dùng vòng lặp để hiển thị tất cả attachment
+        attachments.forEach { attachment ->
+            AttachmentItem(filename = attachment.filename)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
     }
 }
 
@@ -323,5 +338,5 @@ fun AttachmentItem(filename: String) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DetailScreenPreview() {
-    DetailScreen()
+    DetailScreen(onNavigateBack = {}, onDeleteClick = {}, task = null)
 }

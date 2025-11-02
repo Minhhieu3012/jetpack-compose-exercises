@@ -4,13 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import vn.edu.ut.hieupm9898.homepageflow.ui.screens.DetailScreen
+import vn.edu.ut.hieupm9898.homepageflow.ui.screens.EmptyScreen
+import vn.edu.ut.hieupm9898.homepageflow.ui.screens.HomeScreen
+import vn.edu.ut.hieupm9898.homepageflow.ui.screens.TasksViewModel
 import vn.edu.ut.hieupm9898.homepageflow.ui.theme.HomePageFlowTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +23,59 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HomePageFlowTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                // Tao NavController
+                val navController = rememberNavController()
+
+                // Tao ViewModel
+                val viewModel: TasksViewModel = viewModel()
+
+                // Lang nghe state tu viewModel
+                val uiState by viewModel.uiState.collectAsState()
+
+                // Thiet lap NavHost (bieu do dieu huong)
+                NavHost(navController = navController, startDestination = "home") {
+                    // Route cho man hinh chinh (chua logic home or empty)
+                    composable("home") {
+                        if(uiState.tasks.isEmpty() && !uiState.isLoading) {
+                            EmptyScreen()
+                        } else {
+                            HomeScreen(
+                                tasks = uiState.tasks,
+                                onTaskClick = { taskId ->
+                                    navController.navigate("detail/$taskId")
+                                }
+                            )
+                        }
+                    }
+
+                    // Route cho man hinh chi tiet
+                    composable("detail/{taskId}") { backStackEntry ->
+                        val taskId = backStackEntry.arguments?.getString("taskId")
+
+                        LaunchedEffect(taskId) {
+                            if (taskId != null) {
+                                viewModel.loadTaskDetail(taskId)
+                            }
+                        }
+
+                        DetailScreen(
+                            task = uiState.selectedTask,
+                            onNavigateBack = {
+                                navController.popBackStack()
+                            },
+                            onDeleteClick = {
+                                if (taskId != null) {
+                                    viewModel.deleteTask(taskId)
+                                    // Sau khi xóa, quay lại
+                                    navController.popBackStack()
+                                    // Yêu cầu load lại danh sách sau khi quay về
+                                    viewModel.loadTasks()
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HomePageFlowTheme {
-        Greeting("Android")
     }
 }
