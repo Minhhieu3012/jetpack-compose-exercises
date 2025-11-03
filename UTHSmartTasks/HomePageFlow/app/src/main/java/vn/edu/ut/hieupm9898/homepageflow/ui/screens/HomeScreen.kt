@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,9 +34,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -142,11 +140,7 @@ fun TaskItem(
     onTaskClick: () -> Unit
 ) {
 
-    val cardColor = try {
-        Color(android.graphics.Color.parseColor(task.colorHex))
-    } catch (_: Exception) {
-        Color(0xFFE1BBC1) // Màu mặc định nếu parse lỗi
-    }
+    val cardColor = Color(0xFFE1BBC1)
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -202,7 +196,7 @@ fun TaskItem(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    text = task.dateTime,
+                    text = task.dueDate,
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color(0xFF333333)
                 )
@@ -216,101 +210,87 @@ fun TaskItem(
 fun TaskBottomBar() {
     BottomAppBar(
         containerColor = Color.Transparent,
-        modifier = Modifier
-            .height(65.dp), // tang chieu cao
-        content = {
-            NavigationBar(
-                containerColor = Color.Transparent, // Loai bo mau nen
-                tonalElevation = 0.dp
-            ) {
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home",
-                            modifier = Modifier.size(30.dp)
-                        ) },
-                    selected = true,
-                    onClick = { /* TODO */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF2196F3),
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Date Range",
-                            modifier = Modifier.size(30.dp)
-                        ) },
-                    selected = false,
-                    onClick = { /* TODO */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF2196F3),
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
+        tonalElevation = 0.dp
+    ) {
+        // BottomAppBar là một RowScope.
+        // Chúng ta dùng IconButton và Spacer để tạo khoảng trống cho FAB.
 
-                // Item trống để tạo không gian cho FAB
-                NavigationBarItem(
-                    icon = { /* Empty */ },
-                    enabled = false,
-                    selected = false,
-                    onClick = { }
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.List,
-                            contentDescription = "List",
-                            modifier = Modifier.size(30.dp)
-                        ) },
-                    selected = false,
-                    onClick = { /* TODO */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF2196F3),
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            modifier = Modifier.size(30.dp)
-                        ) },
-                    selected = false,
-                    onClick = { /* TODO */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF2196F3),
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-            }
+        // Icon 1: Home
+        IconButton(
+            onClick = { /* TODO */ },
+            modifier = Modifier.weight(1f) // Chia đều không gian
+        ) {
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "Home",
+                modifier = Modifier.size(40.dp),
+                tint = Color(0xFF2196F3) // Màu đã chọn
+            )
         }
-    )
+
+        // Icon 2: DateRange
+        IconButton(
+            onClick = { /* TODO */ },
+            modifier = Modifier.weight(1f) // Chia đều không gian
+        ) {
+            Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = "Date Range",
+                modifier = Modifier.size(40.dp),
+                tint = Color.Gray // Màu chưa chọn
+            )
+        }
+
+        // để chừa chỗ cho nút FAB ở giữa
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Icon 3: List
+        IconButton(
+            onClick = { /* TODO */ },
+            modifier = Modifier.weight(1f) // Chia đều không gian
+        ) {
+            Icon(
+                imageVector = Icons.Default.List,
+                contentDescription = "List",
+                modifier = Modifier.size(40.dp),
+                tint = Color.Gray // Màu chưa chọn
+            )
+        }
+
+        // Icon 4: Settings
+        IconButton(
+            onClick = { /* TODO */ },
+            modifier = Modifier.weight(1f) // Chia đều không gian
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Settings",
+                modifier = Modifier.size(40.dp),
+                tint = Color.Gray // Màu chưa chọn
+            )
+        }
+    }
 }
 
 // ======================== Nut Floating Action Button (FAB) ==================================
 @Composable
 fun TaskFAB() {
-    FloatingActionButton(
-        onClick = { /*TODO: Xử lý thêm task mới*/ },
-        shape = CircleShape,
-        containerColor = Color(0xFF2196F3),
-        modifier = Modifier.offset(y = 30.dp).size(70.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = "Add Task",
-            tint = Color.White,
-            modifier = Modifier.size(40.dp)
-        )
+    Box {
+        FloatingActionButton(
+            onClick = { /*TODO: Xử lý thêm task mới*/ },
+            shape = CircleShape,
+            containerColor = Color(0xFF2196F3),
+            modifier = Modifier
+                .size(70.dp)
+                .offset(y = 50.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Task",
+                tint = Color.White,
+                modifier = Modifier.size(40.dp)
+            )
+        }
     }
 }
 

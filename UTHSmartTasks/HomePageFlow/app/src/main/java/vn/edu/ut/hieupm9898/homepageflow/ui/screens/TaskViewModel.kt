@@ -40,12 +40,19 @@ class TasksViewModel : ViewModel() {
     fun loadTasks() {
         viewModelScope.launch {
             _uiState.update{ it.copy(isLoading = true, error = null) }
-
             try {
-                val taskList = apiService.getTasks()
+                // 1. Nhận về đối tượng BaseResponse
+                val response = apiService.getTasks()
 
-                _uiState.update {
-                    it.copy(isLoading = false, tasks = taskList)
+                // 2. Kiểm tra xem API có thành công không
+                if (response.isSuccess) {
+                    // 3. Lấy data từ bên trong response
+                    _uiState.update {
+                        it.copy(isLoading = false, tasks = response.data) // <-- Dùng response.data
+                    }
+                } else {
+                    // Ném lỗi nếu API báo lỗi
+                    throw Exception(response.message)
                 }
             } catch (e: Exception) {
                 _uiState.update {
@@ -59,13 +66,18 @@ class TasksViewModel : ViewModel() {
     fun loadTaskDetail(taskId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-
             try {
-                // Gọi API với taskId
-                val taskDetail = apiService.getTaskDetail(taskId) //
+                // 1. Nhận về đối tượng BaseResponse
+                val response = apiService.getTaskDetail(taskId)
 
-                _uiState.update {
-                    it.copy(isLoading = false, selectedTask = taskDetail)
+                // 2. Kiểm tra
+                if (response.isSuccess) {
+                    // 3. Lấy data từ bên trong response
+                    _uiState.update {
+                        it.copy(isLoading = false, selectedTask = response.data) // <-- Dùng response.data
+                    }
+                } else {
+                    throw Exception(response.message)
                 }
             } catch (e: Exception) {
                 _uiState.update {

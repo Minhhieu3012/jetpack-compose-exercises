@@ -249,7 +249,7 @@ fun SubtasksSection(subtasks: List<Subtask>) {
 
         // Dùng vòng lặp để hiển thị tất cả subtask
         subtasks.forEach { subtask ->
-            SubtaskItem(text = subtask.text)
+            SubtaskItem(text = subtask.title)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }

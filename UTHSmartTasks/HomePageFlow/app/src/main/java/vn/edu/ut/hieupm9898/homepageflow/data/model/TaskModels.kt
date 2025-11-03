@@ -2,10 +2,27 @@ package vn.edu.ut.hieupm9898.homepageflow.data.model
 
 import com.google.gson.annotations.SerializedName
 
-// Model chinh cho 1 Task, bao gom tat ca thong tin chi tiet tu DetailScreen
+/**
+ * 1. ĐỐI TƯỢNG BAO BỌC (WRAPPER) CHUNG
+ */
+data class BaseResponse<T>(
+    @SerializedName("isSuccess")
+    val isSuccess: Boolean,
+
+    @SerializedName("message")
+    val message: String,
+
+    @SerializedName("data")
+    val data: T // T có thể là List<Task> hoặc Task
+)
+
+/**
+ * 2. CẬP NHẬT TASK MODEL
+ * Khớp chính xác với các trường trong JSON
+ */
 data class Task(
     @SerializedName("id")
-    val id: String, // dung String cho id tu api se an toan
+    val id: String,
 
     @SerializedName("title")
     val title: String,
@@ -16,46 +33,46 @@ data class Task(
     @SerializedName("status")
     val status: String,
 
-    @SerializedName("category")
-    val category: String, // Them tu DetailScreen
-
     @SerializedName("priority")
-    val priority: String, // Them tu DetailScreen
+    val priority: String,
 
-    @SerializedName("dateTime")
-    val dateTime: String,
+    @SerializedName("category")
+    val category: String,
 
-    @SerializedName("colorHex")
-    val colorHex: String,
+    @SerializedName("dueDate")
+    val dueDate: String,
 
     @SerializedName("subtasks")
-    val subtasks: List<Subtask>, // Them tu DetailScreen
+    val subtasks: List<Subtask>,
 
     @SerializedName("attachments")
-    val attachments: List<Attachment> // Them tu DetailScreen
+    val attachments: List<Attachment>
 )
 
-// Model cho 1 Subtask
+/**
+ * 3. CẬP NHẬT SUBTASK MODEL
+ */
 data class Subtask(
     @SerializedName("id")
     val id: String,
 
-    @SerializedName("text")
-    val text: String,
+    @SerializedName("title")
+    val title: String,
 
     @SerializedName("isCompleted")
     val isCompleted: Boolean
 )
 
-// Model cho 1 Attachment
+/**
+ * 4. CẬP NHẬT ATTACHMENT MODEL
+ */
 data class Attachment(
     @SerializedName("id")
     val id: String,
 
-    @SerializedName("filename")
+    @SerializedName("fileName")
     val filename: String,
 
-    @SerializedName("url")
-    val url: String
+    @SerializedName("fileUrl")
+    val fileUrl: String
 )
-

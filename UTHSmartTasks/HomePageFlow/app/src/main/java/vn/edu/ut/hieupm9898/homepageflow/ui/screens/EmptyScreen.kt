@@ -30,9 +30,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -131,7 +128,7 @@ fun EmptyHeader() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp,bottom = 16.dp),
+            .padding(top = 16.dp, bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
@@ -176,103 +173,84 @@ fun EmptyHeader() {
 fun EmptyBottomBar() {
     BottomAppBar(
         containerColor = Color.Transparent,
-        modifier = Modifier
-            .height(65.dp), // tang chieu cao
-        content = {
-            NavigationBar(
-                containerColor = Color.Transparent, // Loai bo mau nen
-                tonalElevation = 0.dp
-            ) {
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home",
-                            modifier = Modifier.size(30.dp)
-                        ) },
-                    selected = true,
-                    onClick = { /* TODO */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF2196F3),
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Date Range",
-                            modifier = Modifier.size(30.dp)
-                        ) },
-                    selected = false,
-                    onClick = { /* TODO */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF2196F3),
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-
-                // Item trống để tạo không gian cho FAB
-                NavigationBarItem(
-                    icon = { /* Empty */ },
-                    enabled = false,
-                    selected = false,
-                    onClick = { }
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.List,
-                            contentDescription = "List",
-                            modifier = Modifier.size(30.dp)
-                        ) },
-                    selected = false,
-                    onClick = { /* TODO */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF2196F3),
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            modifier = Modifier.size(30.dp)
-                        ) },
-                    selected = false,
-                    onClick = { /* TODO */ },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF2196F3),
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-            }
+        tonalElevation = 0.dp
+    ) {
+        // Icon 1: Home
+        IconButton(
+            onClick = { /* TODO */ },
+            modifier = Modifier.weight(1f) // Chia đều không gian
+        ) {
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "Home",
+                modifier = Modifier.size(40.dp),
+                tint = Color(0xFF2196F3) // Màu đã chọn
+            )
         }
-    )
+
+        // Icon 2: DateRange
+        IconButton(
+            onClick = { /* TODO */ },
+            modifier = Modifier.weight(1f) // Chia đều không gian
+        ) {
+            Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = "Date Range",
+                modifier = Modifier.size(40.dp),
+                tint = Color.Gray // Màu chưa chọn
+            )
+        }
+
+        // Khoảng trống thủ công cho FAB
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Icon 3: List
+        IconButton(
+            onClick = { /* TODO */ },
+            modifier = Modifier.weight(1f) // Chia đều không gian
+        ) {
+            Icon(
+                imageVector = Icons.Default.List,
+                contentDescription = "List",
+                modifier = Modifier.size(40.dp),
+                tint = Color.Gray // Màu chưa chọn
+            )
+        }
+
+        // Icon 4: Settings
+        IconButton(
+            onClick = { /* TODO */ },
+            modifier = Modifier.weight(1f) // Chia đều không gian
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Settings",
+                modifier = Modifier.size(40.dp),
+                tint = Color.Gray // Màu chưa chọn
+            )
+        }
+    }
 }
 
 // ======================== Nut Floating Action Button (FAB) ==================================
 @Composable
 fun EmptyFAB() {
-    FloatingActionButton(
-        onClick = { /*TODO: Xử lý thêm task mới*/ },
-        shape = CircleShape,
-        containerColor = Color(0xFF2196F3),
-        modifier = Modifier
-            .offset(y = 30.dp)
-            .size(70.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = "Add Task",
-            tint = Color.White,
-            modifier = Modifier.size(40.dp)
-        )
+    Box {
+        FloatingActionButton(
+            onClick = { /*TODO: Xử lý thêm task mới*/ },
+            shape = CircleShape,
+            containerColor = Color(0xFF2196F3),
+            modifier = Modifier
+                .size(70.dp)
+                .offset(y = 50.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Task",
+                tint = Color.White,
+                modifier = Modifier.size(40.dp)
+            )
+        }
     }
 }
 
