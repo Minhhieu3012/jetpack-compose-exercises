@@ -29,6 +29,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -37,6 +39,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -140,7 +146,15 @@ fun TaskItem(
     onTaskClick: () -> Unit
 ) {
 
-    val cardColor = Color(0xFFE1BBC1)
+    // Logic mới: Đặt màu dựa trên status
+    val cardColor = when (task.status) {
+        "In Progress" -> Color(0xFFE1BBC1)
+        "Pending" -> Color(0xFFC0DCB9)
+        "Completed" -> Color(0xFFB7E9FF)
+        else -> Color(0xFFE0E0E0)
+    }
+
+    var isChecked by remember { mutableStateOf(task.isCompleted) }
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -153,13 +167,27 @@ fun TaskItem(
             .clickable { onTaskClick() }
     ) {
         Column(
-            modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
+            modifier = Modifier.padding(vertical = 24.dp, horizontal = 4.dp)
         ) {
             // Phan tren: Checkbox, title, desc
             Row(
                 verticalAlignment = Alignment.Top,
-                modifier = Modifier.padding(start = 16.dp)
             ) {
+
+                Checkbox(
+                    checked = isChecked,
+                    onCheckedChange = {
+                        isChecked = it
+                        // TODO: Gọi ViewModel để lưu trạng thái này
+                    },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = Color.Black,
+                        uncheckedColor = Color.Black,
+                        checkmarkColor = Color.White
+                    ),
+                    modifier = Modifier.padding(end = 8.dp) // Thêm padding bên phải Checkbox
+                )
+
                 Column {
                     Text(
                         text = task.title,
@@ -168,7 +196,7 @@ fun TaskItem(
                         color = Color(0xFF333333)
                     )
 
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
 
                     Text(
                         text = task.description,
@@ -187,7 +215,7 @@ fun TaskItem(
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 Text(
-                    text = task.status,
+                    text = "Status: ${task.status}",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF333333)
@@ -197,7 +225,7 @@ fun TaskItem(
 
                 Text(
                     text = task.dueDate,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF333333)
                 )
             }
@@ -297,5 +325,33 @@ fun TaskFAB() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(tasks = emptyList(),onTaskClick = {})
+
+    val samplePreviewTasks = listOf(
+        Task(
+            id = "1",
+            title = "Complete Android Project",
+            description = "Finish the UI, integrate API, and\n write documentation",
+            status = "In Progress",
+            priority = "High",
+            category = "Work",
+            dueDate = "2024-03-24T09:00:00Z",
+            isCompleted = true, // Cho checkbox
+            subtasks = emptyList(),
+            attachments = emptyList()
+        ),
+        Task(
+            id = "2",
+            title = "Preview Task 2",
+            description = "Đây là mô tả cho task 2",
+            status = "Pending",
+            priority = "Medium",
+            category = "Personal",
+            dueDate = "11:00 2025-11-03",
+            isCompleted = false, // Cho checkbox
+            subtasks = emptyList(),
+            attachments = emptyList()
+        )
+    )
+
+    HomeScreen(tasks = samplePreviewTasks, onTaskClick = {})
 }

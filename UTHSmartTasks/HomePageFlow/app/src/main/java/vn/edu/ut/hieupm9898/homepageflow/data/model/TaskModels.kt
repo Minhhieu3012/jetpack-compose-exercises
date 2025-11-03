@@ -42,6 +42,9 @@ data class Task(
     @SerializedName("dueDate")
     val dueDate: String,
 
+    @SerializedName("isCompleted")
+    val isCompleted: Boolean,
+
     @SerializedName("subtasks")
     val subtasks: List<Subtask>,
 

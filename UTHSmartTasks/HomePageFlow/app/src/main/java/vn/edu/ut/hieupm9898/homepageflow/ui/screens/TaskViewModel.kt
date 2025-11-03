@@ -88,23 +88,25 @@ class TasksViewModel : ViewModel() {
     }
 
     // Ham goi api de xoa 1 Task
-    fun deleteTask(taskId: String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+    suspend fun deleteTask(taskId: String) {
+        _uiState.update { it.copy(isLoading = true, error = null) }
+        try {
+            // Gọi API Xóa
+            apiService.deleteTask(taskId)
 
-            try {
-                // Gọi API Xóa
-                apiService.deleteTask(taskId)
-
-                // Sau khi xóa, không cần làm gì ở đây.
-                // UI sẽ tự động điều hướng về.
-                _uiState.update { it.copy(isLoading = false) }
-
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(isLoading = false, error = "Không thể xóa task: ${e.message}")
-                }
+            // Sau khi xóa thành công, cập nhật lại UI bằng cách loại bỏ task khỏi danh sách
+            _uiState.update { currentState ->
+                // Lọc bỏ task đã bị xóa ra khỏi danh sách hiện tại
+                val updatedTasks = currentState.tasks.filter { it.id != taskId }
+                // Trả về state mới với danh sách đã cập nhật
+                currentState.copy(tasks = updatedTasks)
             }
+
+        } catch (e: Exception) {
+            _uiState.update {
+                it.copy(isLoading = false, error = "Không thể xóa task: ${e.message}")
+            }
+            throw e
         }
     }
 }

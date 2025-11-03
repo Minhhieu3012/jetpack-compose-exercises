@@ -7,10 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 import vn.edu.ut.hieupm9898.homepageflow.ui.screens.DetailScreen
 import vn.edu.ut.hieupm9898.homepageflow.ui.screens.EmptyScreen
 import vn.edu.ut.hieupm9898.homepageflow.ui.screens.HomeScreen
@@ -31,6 +33,9 @@ class MainActivity : ComponentActivity() {
 
                 // Lang nghe state tu viewModel
                 val uiState by viewModel.uiState.collectAsState()
+
+                // Lấy CoroutineScope để gọi hàm suspend
+                val scope = rememberCoroutineScope()
 
                 // Thiet lap NavHost (bieu do dieu huong)
                 NavHost(navController = navController, startDestination = "home") {
@@ -65,11 +70,19 @@ class MainActivity : ComponentActivity() {
                             },
                             onDeleteClick = {
                                 if (taskId != null) {
-                                    viewModel.deleteTask(taskId)
-                                    // Sau khi xóa, quay lại
-                                    navController.popBackStack()
-                                    // Yêu cầu load lại danh sách sau khi quay về
-                                    viewModel.loadTasks()
+                                    // 1. Khởi chạy một coroutine
+                                    scope.launch {
+                                        try {
+                                            // 2. Chờ (await) cho ViewModel xóa xong
+                                            viewModel.deleteTask(taskId)
+
+                                            // 3. Xóa thành công, điều hướng về
+                                            navController.popBackStack()
+                                        } catch (e: Exception) {
+                                            // Xử lý lỗi (ví dụ: hiển thị Toast)
+                                            // (Tạm thời chúng ta không làm gì)
+                                        }
+                                    }
                                 }
                             }
                         )
