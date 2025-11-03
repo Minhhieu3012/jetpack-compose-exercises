@@ -39,16 +39,20 @@ class MainActivity : ComponentActivity() {
 
                 // Thiet lap NavHost (bieu do dieu huong)
                 NavHost(navController = navController, startDestination = "home") {
-                    // Route cho man hinh chinh (chua logic home or empty)
+
+                    // Route "home" (Màn hình chính)
                     composable("home") {
                         if(uiState.tasks.isEmpty() && !uiState.isLoading) {
-                            EmptyScreen()
+                            EmptyScreen(
+                                onFabClick = { navController.navigate("add_task") }
+                            )
                         } else {
                             HomeScreen(
                                 tasks = uiState.tasks,
                                 onTaskClick = { taskId ->
                                     navController.navigate("detail/$taskId")
-                                }
+                                },
+                                onFabClick = { navController.navigate("add_task") }
                             )
                         }
                     }
@@ -80,11 +84,18 @@ class MainActivity : ComponentActivity() {
                                             navController.popBackStack()
                                         } catch (e: Exception) {
                                             // Xử lý lỗi (ví dụ: hiển thị Toast)
-                                            // (Tạm thời chúng ta không làm gì)
                                         }
                                     }
                                 }
                             }
+                        )
+                    }
+                    // Route cho man hinh them
+                    composable("add_task") {
+                        // Hiển thị EmptyScreen
+                        // Nút FAB trên màn hình này sẽ đưa bạn quay lại
+                        EmptyScreen(
+                            onFabClick = { navController.popBackStack() }
                         )
                     }
                 }

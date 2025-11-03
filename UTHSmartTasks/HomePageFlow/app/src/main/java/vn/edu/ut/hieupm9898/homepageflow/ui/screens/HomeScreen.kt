@@ -59,13 +59,14 @@ import vn.edu.ut.hieupm9898.homepageflow.data.model.Task
 @Composable
 fun HomeScreen(
     tasks: List<Task>,
-    onTaskClick: (String) -> Unit
+    onTaskClick: (String) -> Unit,
+    onFabClick: () -> Unit
 ) {
     Scaffold(
         // BottomAppBar
         bottomBar = { TaskBottomBar() },
         // Nut floating action button
-        floatingActionButton = { TaskFAB() },
+        floatingActionButton = { TaskFAB(onClick = onFabClick) },
         floatingActionButtonPosition = FabPosition.Center,
         content = { paddingValues ->
             LazyColumn(
@@ -302,10 +303,10 @@ fun TaskBottomBar() {
 
 // ======================== Nut Floating Action Button (FAB) ==================================
 @Composable
-fun TaskFAB() {
+fun TaskFAB(onClick: () -> Unit) {
     Box {
         FloatingActionButton(
-            onClick = { /*TODO: Xử lý thêm task mới*/ },
+            onClick = onClick,
             shape = CircleShape,
             containerColor = Color(0xFF2196F3),
             modifier = Modifier
@@ -325,33 +326,5 @@ fun TaskFAB() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-
-    val samplePreviewTasks = listOf(
-        Task(
-            id = "1",
-            title = "Complete Android Project",
-            description = "Finish the UI, integrate API, and\n write documentation",
-            status = "In Progress",
-            priority = "High",
-            category = "Work",
-            dueDate = "2024-03-24T09:00:00Z",
-            isCompleted = true, // Cho checkbox
-            subtasks = emptyList(),
-            attachments = emptyList()
-        ),
-        Task(
-            id = "2",
-            title = "Preview Task 2",
-            description = "Đây là mô tả cho task 2",
-            status = "Pending",
-            priority = "Medium",
-            category = "Personal",
-            dueDate = "11:00 2025-11-03",
-            isCompleted = false, // Cho checkbox
-            subtasks = emptyList(),
-            attachments = emptyList()
-        )
-    )
-
-    HomeScreen(tasks = samplePreviewTasks, onTaskClick = {})
+    HomeScreen(tasks = emptyList(), onTaskClick = {}, onFabClick = {})
 }

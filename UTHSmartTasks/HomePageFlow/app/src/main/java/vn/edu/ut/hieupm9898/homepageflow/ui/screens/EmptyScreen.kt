@@ -44,12 +44,12 @@ import androidx.compose.ui.unit.dp
 import vn.edu.ut.hieupm9898.homepageflow.R
 
 @Composable
-fun EmptyScreen() {
+fun EmptyScreen(onFabClick: () -> Unit) {
     Scaffold(
         // BottomAppBar
         bottomBar = { EmptyBottomBar() },
         // Nut floating action button
-        floatingActionButton = { EmptyFAB() },
+        floatingActionButton = { EmptyFAB(onClick = onFabClick) },
         floatingActionButtonPosition = FabPosition.Center,
         content = { paddingValues ->
             Box(
@@ -234,10 +234,10 @@ fun EmptyBottomBar() {
 
 // ======================== Nut Floating Action Button (FAB) ==================================
 @Composable
-fun EmptyFAB() {
+fun EmptyFAB(onClick: () -> Unit) {
     Box {
         FloatingActionButton(
-            onClick = { /*TODO: Xử lý thêm task mới*/ },
+            onClick = onClick,
             shape = CircleShape,
             containerColor = Color(0xFF2196F3),
             modifier = Modifier
@@ -257,5 +257,5 @@ fun EmptyFAB() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun EmptyScreenPreview() {
-    EmptyScreen()
+    EmptyScreen(onFabClick = {})
 }
