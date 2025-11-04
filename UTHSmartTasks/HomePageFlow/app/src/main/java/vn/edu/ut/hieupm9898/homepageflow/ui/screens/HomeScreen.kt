@@ -55,7 +55,8 @@ import androidx.compose.ui.unit.sp
 import vn.edu.ut.hieupm9898.homepageflow.R
 import vn.edu.ut.hieupm9898.homepageflow.data.model.Task
 
-// Màn hình chính
+
+// ========================== Màn hình chính =====================================
 @Composable
 fun HomeScreen(
     tasks: List<Task>,
@@ -93,8 +94,8 @@ fun HomeScreen(
     )
 }
 
-// Cac thanh phan Composable
-// ======================== Header ==================================
+
+// ========================== Header =====================================
 @Composable
 fun TaskHeader() {
     Row(
@@ -140,7 +141,7 @@ fun TaskHeader() {
     }
 }
 
-// ======================== Mot the Task Item ==================================
+// ======================== Phần Task Item ==================================
 @Composable
 fun TaskItem(
     task: Task,

@@ -3,13 +3,13 @@ package vn.edu.ut.hieupm9898.homepageflow.data.network
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-// Singleton object de khoi tao va cung cap retrofit service
+// Singleton object để khởi tạo và cung cấp Retrofit service
 object RetrofitClient {
     // URL goc cua API
     private const val BASE_URL = "https://amock.io/"
 
     // Khoi tao Retrofit
-    private val retrofit: Retrofit by lazy {
+    private val retrofit: Retrofit by lazy { // by lazy là khởi tạo lười (chỉ được tạo khi gọi lần đầu tiên)
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create()) // dung gson

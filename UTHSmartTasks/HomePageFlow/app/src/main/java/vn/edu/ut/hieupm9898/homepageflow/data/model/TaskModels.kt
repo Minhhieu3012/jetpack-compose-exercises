@@ -2,8 +2,10 @@ package vn.edu.ut.hieupm9898.homepageflow.data.model
 
 import com.google.gson.annotations.SerializedName
 
+// ĐỊNH NGHĨA DATA MODELS
+
 /**
- * 1. ĐỐI TƯỢNG BAO BỌC (WRAPPER) CHUNG
+ * ĐỐI TƯỢNG BAO BỌC (WRAPPER) CHUNG
  */
 data class BaseResponse<T>(
     @SerializedName("isSuccess")
@@ -13,11 +15,11 @@ data class BaseResponse<T>(
     val message: String,
 
     @SerializedName("data")
-    val data: T // T có thể là List<Task> hoặc Task
+    val data: T // T có thể là List<Task> hoặc Task (kiểu dữ liệu chung)
 )
 
 /**
- * 2. CẬP NHẬT TASK MODEL
+ * CẬP NHẬT TASK MODEL
  * Khớp chính xác với các trường trong JSON
  */
 data class Task(
@@ -53,7 +55,7 @@ data class Task(
 )
 
 /**
- * 3. CẬP NHẬT SUBTASK MODEL
+ * CẬP NHẬT SUBTASK MODEL
  */
 data class Subtask(
     @SerializedName("id")
@@ -67,7 +69,7 @@ data class Subtask(
 )
 
 /**
- * 4. CẬP NHẬT ATTACHMENT MODEL
+ * CẬP NHẬT ATTACHMENT MODEL
  */
 data class Attachment(
     @SerializedName("id")

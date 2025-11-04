@@ -11,12 +11,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import vn.edu.ut.hieupm9898.homepageflow.data.model.Task
 import vn.edu.ut.hieupm9898.homepageflow.data.network.RetrofitClient
 
-// data class dai dien cho toan bo state cua giao dien ma viewModel xu ly
+
+// DATA CLASS ĐẠI DIỆN CHO TOÀN BỘ STATE CỦA GIAO DIỆN MÀ VIEWMODEL XỬ LÝ
 data class TaskUiState(
     val isLoading: Boolean = false,
-    val tasks: List<Task> = emptyList(), // Ds cho home screen
-    val selectedTask: Task? = null, // Du lieu cho Detail screen
-    val error: String? = null // Xu ly loi
+    val tasks: List<Task> = emptyList(), // Danh sách cho Home screen
+    val selectedTask: Task? = null, // Dữ liệu cho Detail screen
+    val error: String? = null // Xử lý lỗi
 )
 
 // ViewModel
@@ -31,7 +32,7 @@ class TasksViewModel : ViewModel() {
     // uiState la trang thai hien thi (chi doc)
     val uiState: StateFlow<TaskUiState> = _uiState.asStateFlow()
 
-    // Tai ds task khi khoi tao viewModel
+    // Tải danh sách task khi khởi tạo viewModel
     init {
         loadTasks()
     }
@@ -74,7 +75,7 @@ class TasksViewModel : ViewModel() {
                 if (response.isSuccess) {
                     // 3. Lấy data từ bên trong response
                     _uiState.update {
-                        it.copy(isLoading = false, selectedTask = response.data) // <-- Dùng response.data
+                        it.copy(isLoading = false, selectedTask = response.data)
                     }
                 } else {
                     throw Exception(response.message)

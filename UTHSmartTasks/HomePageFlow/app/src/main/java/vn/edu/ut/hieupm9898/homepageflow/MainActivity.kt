@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                 // Thiet lap NavHost (bieu do dieu huong)
                 NavHost(navController = navController, startDestination = "home") {
 
-                    // Route "home" (Màn hình chính)
+                    // Route "home" (Home Screen)
                     composable("home") {
                         if(uiState.tasks.isEmpty() && !uiState.isLoading) {
                             EmptyScreen(
@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    // Route cho man hinh chi tiet
+                    // Route cho Detail Screen
                     composable("detail/{taskId}") { backStackEntry ->
                         val taskId = backStackEntry.arguments?.getString("taskId")
 
@@ -90,9 +90,9 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
-                    // Route cho man hinh them
+
+                    // Route cho Empty Screen
                     composable("add_task") {
-                        // Hiển thị EmptyScreen
                         // Nút FAB trên màn hình này sẽ đưa bạn quay lại
                         EmptyScreen(
                             onFabClick = { navController.popBackStack() }

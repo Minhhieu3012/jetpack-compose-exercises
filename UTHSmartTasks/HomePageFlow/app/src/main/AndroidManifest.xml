@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Quyền truy cập internet (vd: Tải dữ liệu từ API, mở trang web)-->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application

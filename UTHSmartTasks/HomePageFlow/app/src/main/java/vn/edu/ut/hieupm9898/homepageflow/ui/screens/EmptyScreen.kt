@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import vn.edu.ut.hieupm9898.homepageflow.R
 
+// ======================== Màn hình chính ==================================
 @Composable
 fun EmptyScreen(onFabClick: () -> Unit) {
     Scaffold(
@@ -121,7 +122,6 @@ fun EmptyScreen(onFabClick: () -> Unit) {
     )
 }
 
-// Cac thanh phan Composable
 // ======================== Header ==================================
 @Composable
 fun EmptyHeader() {

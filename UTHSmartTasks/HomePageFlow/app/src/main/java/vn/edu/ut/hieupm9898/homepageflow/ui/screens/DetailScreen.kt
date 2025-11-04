@@ -48,7 +48,8 @@ import vn.edu.ut.hieupm9898.homepageflow.data.model.Attachment
 import vn.edu.ut.hieupm9898.homepageflow.data.model.Subtask
 import vn.edu.ut.hieupm9898.homepageflow.data.model.Task
 
-// Man hinh chinh
+
+// ================================= Màn hình chính =====================================
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
@@ -93,7 +94,7 @@ fun DetailScreen(
     }
 }
 
-// Thanh Top Bar
+// ================================= Thanh Top Bar =====================================
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailTopBar(
@@ -152,7 +153,7 @@ fun DetailTopBar(
     )
 }
 
-// Tieu de va mo ta Task
+// ================================= Phần Tiêu đề =====================================
 @Composable
 fun DetailHeader(task: Task) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -172,7 +173,7 @@ fun DetailHeader(task: Task) {
     }
 }
 
-// The thong tin
+// ================================= Phần Info Card =====================================
 @Composable
 fun InfoCard(task: Task) {
     Card(
@@ -209,7 +210,7 @@ fun InfoCard(task: Task) {
     }
 }
 
-// Composable cho mot muc thong tin (Icon + 2 dong text)
+// ================================= Thông tin Item (Icon + 2 dòng text) =====================================
 @Composable
 fun InfoItem(iconResId: Int, label: String, value: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -236,7 +237,7 @@ fun InfoItem(iconResId: Int, label: String, value: String) {
     }
 }
 
-// Khu vuc Subtasks
+// ================================= Phần Subtasks =====================================
 @Composable
 fun SubtasksSection(subtasks: List<Subtask>) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -255,7 +256,7 @@ fun SubtasksSection(subtasks: List<Subtask>) {
     }
 }
 
-// Composable cho một Subtask (Checkbox + Text)
+// ================================= Thông tin subtasks (Checkbox + Text) =====================================
 @Composable
 fun SubtaskItem(text: String) {
     var isChecked by remember { mutableStateOf(false) }
@@ -288,7 +289,7 @@ fun SubtaskItem(text: String) {
     }
 }
 
-// Khu vuc Attachments
+// ================================= Phần Attachments =====================================
 @Composable
 fun AttachmentsSection(attachments: List<Attachment>) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -307,7 +308,7 @@ fun AttachmentsSection(attachments: List<Attachment>) {
     }
 }
 
-// Composable cho 1 attachments
+// ================================= Thông tin Attachments =====================================
 @Composable
 fun AttachmentItem(filename: String) {
     Surface(
